@@ -49,14 +49,13 @@ Crafty.scene('Game', function(){
   var buildingsWidth = 0;
 
   while(buildingsWidth < Crafty.stage.elem.clientWidth){
-    var building = Crafty.e('2D, Canvas, Building, Color')
+    var building = Crafty.e('Building')
         .attr({
           x: buildingsWidth,
           y: Crafty.stage.elem.clientHeight,
           w: Crafty.math.randomInt(5, 10)*10,
           h: Crafty.math.randomInt(10, 50)*10
-        })
-        .color('#' + toHex(Crafty.math.randomInt(0, 255)) + toHex(Crafty.math.randomInt(0, 255)) + '00')
+        });
         building.y -= building._h;
 
     buildings.push({
@@ -103,13 +102,23 @@ Crafty.c('Gorilla', {
 
 Crafty.c('Banana', {
   init: function(){
-    this.requires('2D, Canvas, Color, Gravity')
+    this.requires('2D, Canvas, Color, Gravity, Collision')
         .attr({
           w: 5,
           h: 5
         })
         .color('#00ffff')
-        .gravity();
+        .gravity()
+        .onHit('Building', function(){
+          if(this.hit('Hole')) return;
+          console.log('BOOM');
+          Crafty.e('Hole')
+                .attr({
+                  x: this._x-10,
+                  y: this._y-10
+                });
+          this.destroy();
+        });;
   },
 
   velocity: function(s, a){
@@ -121,4 +130,19 @@ Crafty.c('Banana', {
 });
 
 Crafty.c('Building', {
+  init: function(){
+    this.requires('2D, Canvas, Color')
+        .color('#' + toHex(Crafty.math.randomInt(0, 255)) + toHex(Crafty.math.randomInt(0, 255)) + '00');
+  }
 });
+
+Crafty.c('Hole', {
+  init: function(){
+    this.requires('2D, Canvas, Color')
+        .attr({
+          w: 20,
+          h: 20
+        })
+        .color('#0000ff');
+  }
+})
