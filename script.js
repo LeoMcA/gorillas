@@ -68,7 +68,19 @@ Crafty.scene('Game', function(){
   }
 
   // now, put the gorillas on the buildings
-  Crafty.e('Gorilla');
+  var gLeft = Crafty.e('Gorilla')
+                    .attr({
+                      x: buildings[1].x+buildings[1].w/2-25,
+                      y: buildings[1].y-50
+                    });
+  var gRight = Crafty.e('Gorilla')
+                     .attr({
+                       x: buildings[buildings.length-2].x+buildings[buildings.length-2].w/2-25,
+                       y: buildings[buildings.length-2].y-50
+                     });
+
+  // make it the left gorilla's turn
+  gLeft.isTurn(true);
 });
 
 /*---------------------------------------------*\
@@ -78,24 +90,34 @@ Crafty.scene('Game', function(){
 \*---------------------------------------------*/
 
 Crafty.c('Gorilla', {
+  _isTurn: false,
+
+  isTurn: function(b){
+    if(b !== undefined) this._isTurn = b;
+    return this._isTurn;
+  },
+
   init: function(){
     var that = this;
 
-    this.requires('2D, Canvas, Color, Mouse')
+    this.requires('2D, Canvas, Color, Keyboard')
         .attr({
-          x: buildings[1].x+buildings[1].w/2-25,
-          y: buildings[1].y-50,
           w: 50,
           h: 50
         })
         .color('#ffffaa')
-        .bind('Click', function(){
-          Crafty.e('Banana')
-                .attr({
-                  x: that._x+25,
-                  y: that._y+25
-                })
-                .velocity(prompt('Speed'), prompt('Angle'));
+        .bind('KeyDown', function(e){
+          if(this.isTurn()){
+            Crafty.e('Banana')
+                  .attr({
+                    x: that._x+25,
+                    y: that._y+25
+                  })
+                  .velocity(10, 40);
+            this.isTurn(false);
+          } else {
+            this.isTurn(true);
+          }
         });
   }
 });
@@ -107,7 +129,7 @@ Crafty.c('Banana', {
           w: 5,
           h: 5
         })
-        .color('#00ffff')
+        .color('#ffff00')
         .gravity()
         .onHit('Building', function(){
           if(this.hit('Hole')) return;
