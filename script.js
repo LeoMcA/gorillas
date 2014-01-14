@@ -77,7 +77,8 @@ Crafty.scene('Game', function(){
                      .attr({
                        x: buildings[buildings.length-2].x+buildings[buildings.length-2].w/2-25,
                        y: buildings[buildings.length-2].y-50
-                     });
+                     })
+                     .position('right');
 
   // make it the left gorilla's turn
   gLeft.isTurn(true);
@@ -91,10 +92,15 @@ Crafty.scene('Game', function(){
 
 Crafty.c('Gorilla', {
   _isTurn: false,
+  _position: 'left',
 
   isTurn: function(b){
     if(b !== undefined) this._isTurn = b;
     return this._isTurn;
+  },
+
+  position: function(p){
+    if(p == 'right') this._position = 'right';
   },
 
   init: function(){
@@ -113,7 +119,7 @@ Crafty.c('Gorilla', {
                     x: that._x+25,
                     y: that._y+25
                   })
-                  .velocity(10, 40);
+                  .velocity(10, 40, this._position);
             this.isTurn(false);
           } else {
             this.isTurn(true);
@@ -143,11 +149,12 @@ Crafty.c('Banana', {
         });;
   },
 
-  velocity: function(s, a){
+  velocity: function(s, a, pos){
+    if(pos == 'right') a *= -1;
     this.bind('EnterFrame', function(){
           this.x += vectorX(s, a),
           this.y += vectorY(s, a)
-        })
+        });
   }
 });
 
