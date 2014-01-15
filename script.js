@@ -2,7 +2,7 @@ window.addEventListener('load', function(){
   Crafty.init();
   Crafty.background('#0000ff');
 
-  var title = Crafty.e('2D, Canvas, Text, Mouse')
+  var title = Crafty.e('2D, Canvas, Text, Keyboard')
         .attr({
           x: Crafty.stage.elem.clientWidth/2,
           y: Crafty.stage.elem.clientHeight/2
@@ -11,7 +11,7 @@ window.addEventListener('load', function(){
         .textColor('#ffff00')
         .textFont({family: 'monospace', size: '50px'})
         .unselectable()
-        .bind('Click', function(){
+        .bind('KeyDown', function(){
           Crafty.scene('Game');
         });
 
@@ -117,7 +117,7 @@ Crafty.c('Gorilla', {
             Crafty.e('Banana')
                   .attr({
                     x: that._x+25,
-                    y: that._y+25
+                    y: that._y+25,
                   })
                   .velocity(10, 40, this._position);
             this.isTurn(false);
@@ -132,8 +132,8 @@ Crafty.c('Banana', {
   init: function(){
     this.requires('2D, Canvas, Color, Gravity, Collision')
         .attr({
-          w: 5,
-          h: 5
+          w: 6,
+          h: 6
         })
         .color('#ffff00')
         .gravity()
@@ -142,8 +142,8 @@ Crafty.c('Banana', {
           console.log('BOOM');
           Crafty.e('Hole')
                 .attr({
-                  x: this._x-10,
-                  y: this._y-10
+                  x: this._x+this._w/2-30/2,
+                  y: this._y+this._h/2-30/2,
                 });
           this.destroy();
         });;
@@ -169,8 +169,8 @@ Crafty.c('Hole', {
   init: function(){
     this.requires('2D, Canvas, Color')
         .attr({
-          w: 20,
-          h: 20
+          w: 30,
+          h: 30
         })
         .color('#0000ff');
   }
