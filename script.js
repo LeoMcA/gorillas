@@ -82,6 +82,44 @@ Crafty.scene('Game', function(){
 
   // make it the left gorilla's turn
   gLeft.isTurn(true);
+
+  var angleName = Crafty.e('Label')
+                        .attr({
+                          x: 10,
+                          y: 10
+                        })
+                        .text('Angle: ');
+
+  var angleInput = Crafty.e('Input')
+                         .attr({
+                          x: angleName._w+10,
+                          y: 10
+                         })
+                         .bind('KeyDown', function(e){
+                          if(this._selected && e.key == Crafty.keys['ENTER']){
+                            this.selected(false);
+                            speedInput.selected(true);
+                          }
+                         })
+                         .selected(true);
+
+  var speedName = Crafty.e('Label')
+                        .attr({
+                          x: 10,
+                          y: angleName._h+20
+                        })
+                        .text('Speed: ');
+
+  var speedInput = Crafty.e('Input')
+                         .attr({
+                          x: speedName._w+10,
+                          y: speedName._y
+                         })
+                         .bind('KeyDown', function(e){
+                          if(this._selected && e.key == Crafty.keys['ENTER']){
+                            Crafty.trigger('Fire', this._text, angleInput._text);
+                          }
+                         });
 });
 
 /*---------------------------------------------*\
@@ -112,14 +150,14 @@ Crafty.c('Gorilla', {
           h: 50
         })
         .color('#ffffaa')
-        .bind('KeyDown', function(e){
+        .bind('Fire', function(s, a){
           if(this.isTurn()){
             Crafty.e('Banana')
                   .attr({
                     x: that._x+25,
                     y: that._y+25,
                   })
-                  .velocity(10, 40, this._position);
+                  .velocity(s, a, this._position);
             this.isTurn(false);
           } else {
             this.isTurn(true);
@@ -146,7 +184,7 @@ Crafty.c('Banana', {
                   y: this._y+this._h/2-30/2,
                 });
           this.destroy();
-        });;
+        });
   },
 
   velocity: function(s, a, pos){
@@ -174,4 +212,38 @@ Crafty.c('Hole', {
         })
         .color('#0000ff');
   }
-})
+});
+
+Crafty.c('Label', {
+  init: function(){
+    this.requires('2D, Canvas, Text, Keyboard')
+        .textColor('#ffffff');
+  }
+});
+
+Crafty.c('Input', {
+  _text: '',
+  _selected: false,
+
+  init: function(){
+    this.requires('2D, Canvas, Text, Keyboard')
+        .textColor('#ffffff')
+        .bind('KeyDown', function(e){
+          if(this._selected){
+            if(e.key == Crafty.keys['BACKSPACE']){
+              this._text = this._text.substring(0, this._text.length-1);
+              this.text(this._text);
+            } else if(this._text.length > 2){
+              return;
+            } else if(47 < e.key && e.key < 58){
+              this._text += e.key-48;
+              this.text(this._text);
+            }
+          }
+        });
+  },
+
+  selected: function(b){
+    this._selected = b;
+  }
+});
