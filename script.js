@@ -98,7 +98,17 @@ Crafty.scene('Game', function(){
                          .bind('KeyDown', function(e){
                           if(this._selected && e.key == Crafty.keys['ENTER']){
                             this.selected(false);
-                            speedInput.selected(true);
+                            Crafty.e('Input')
+                                  .attr({
+                                    x: speedName._w+10,
+                                    y: speedName._y
+                                  })
+                                  .bind('KeyDown', function(e){
+                                    if(this._selected && e.key == Crafty.keys['ENTER']){
+                                      Crafty.trigger('Fire', this._text, angleInput._text);
+                                    }
+                                  })
+                                  .selected(true);
                           }
                          })
                          .selected(true);
@@ -109,17 +119,6 @@ Crafty.scene('Game', function(){
                           y: angleName._h+20
                         })
                         .text('Speed: ');
-
-  var speedInput = Crafty.e('Input')
-                         .attr({
-                          x: speedName._w+10,
-                          y: speedName._y
-                         })
-                         .bind('KeyDown', function(e){
-                          if(this._selected && e.key == Crafty.keys['ENTER']){
-                            Crafty.trigger('Fire', this._text, angleInput._text);
-                          }
-                         });
 });
 
 /*---------------------------------------------*\
